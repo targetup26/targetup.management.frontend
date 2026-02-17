@@ -103,7 +103,7 @@ function App() {
               <Route path="forms/audit" element={<FormAuditPage />} />
               <Route path="breaks" element={<BreaksPage />} />
               <Route path="storage-settings" element={<StorageSettingsPage />} />
-              {/* <Route path="network-monitor" element={<NetworkMonitorPage />} /> */}
+              <Route path="network-monitor" element={<NetworkMonitorPage />} />
               <Route path="settings/print" element={<PrintSettingsPage />} />
               <Route path="organization" element={<OrganizationPage />} />
               <Route path="taxonomy" element={<TaxonomyManagementPage />} />
@@ -120,6 +120,7 @@ function App() {
               <Route path="forms" element={<FormsPage />} />
               <Route path="forms/:templateId" element={<EmployeeFormPage />} />
               <Route path="settings" element={<SettingsPage />} />
+              <Route path="network-monitor" element={<NetworkMonitorPage />} />
             </Route>
 
             {/* Sales Portal Gateway */}

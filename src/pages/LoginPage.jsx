@@ -91,8 +91,14 @@ export default function LoginPage() {
                         </div>
                     </div>
 
-                    {/* Decorative Grid Lines */}
-                    <div className="absolute bottom-0 right-0 w-32 h-32 opacity-20 bg-[url('https://patterns.ibrahim-jabbari.com/patterns/fabric-of-squares.png')] bg-contain"></div>
+                    {/* Decorative Grid Lines - Replaced broken external URL with local CSS pattern */}
+                    <div className="absolute bottom-0 right-0 w-32 h-32 opacity-20"
+                        style={{
+                            backgroundImage: 'radial-gradient(circle, currentColor 1px, transparent 1px)',
+                            backgroundSize: '20px 20px',
+                            color: 'var(--color-primary, #3b82f6)'
+                        }}>
+                    </div>
                 </div>
 
                 {/* Login Form Side */}
