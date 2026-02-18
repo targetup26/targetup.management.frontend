@@ -6,6 +6,7 @@ import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import clsx from 'clsx';
 import { toast } from 'react-hot-toast';
+import LeadAgentTracker from './LeadAgentTracker';
 
 const NavItem = ({ to, icon: Icon, label, mobile = false }) => {
     const location = useLocation();
