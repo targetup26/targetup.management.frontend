@@ -31,7 +31,7 @@ import DashboardPage from './pages/admin/DashboardPage';
 import GlobalSettingsPage from './pages/admin/GlobalSettingsPage';
 import AdminSalesSettings from './pages/admin/AdminSalesSettings';
 // import IPRulesPage from './pages/admin/IPRulesPage';
-// import AuditLogsPage from './pages/admin/AuditLogsPage';
+import AuditLogsPage from './pages/admin/AuditLogsPage';
 import UserManagementPage from './pages/admin/UserManagementPage';
 import RoleManagementPage from './pages/admin/RoleManagementPage';
 import FileManagerPage from './pages/admin/FileManagerPage';
@@ -89,7 +89,7 @@ function App() {
               <Route path="dashboard" element={<DashboardPage />} />
               <Route path="settings" element={<GlobalSettingsPage />} />
               <Route path="sales" element={<AdminSalesSettings />} />
-              {/* <Route path="audit-logs" element={<AuditLogsPage />} /> */}
+              <Route path="audit-logs" element={<AuditLogsPage />} />
               <Route path="users" element={<UserManagementPage />} />
               <Route path="users/:id" element={<EmployeeDetailsPage />} />
               <Route path="roles" element={<RoleManagementPage />} />

@@ -28,6 +28,9 @@ export default defineConfig({
   ],
   server: {
     host: '0.0.0.0', // Listen on all network interfaces to allow access from 26.32.68.132
-    port: 5173
+    port: 5173,
+    hmr: {
+      host: '26.32.68.132'
+    }
   }
 })
