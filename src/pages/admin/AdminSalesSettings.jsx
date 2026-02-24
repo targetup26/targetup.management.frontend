@@ -116,7 +116,7 @@ const AdminSalesSettings = () => {
                                         <tr key={job.id} className="hover:bg-white/[0.02] transition-colors group">
                                             <td className="px-8 py-5">
                                                 <span className="text-[10px] font-mono text-text-muted bg-white/5 px-2 py-1 rounded">
-                                                    {job.id.slice(0, 8)}
+                                                    {String(job.id).slice(0, 8)}
                                                 </span>
                                             </td>
                                             <td className="px-8 py-5">
@@ -133,8 +133,8 @@ const AdminSalesSettings = () => {
                                             </td>
                                             <td className="px-8 py-5">
                                                 <span className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full border ${job.status === 'completed' ? 'bg-green-500/10 text-green-400 border-green-500/20' :
-                                                        job.status === 'failed' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
-                                                            'bg-primary/10 text-primary border-primary/20 animate-pulse'
+                                                    job.status === 'failed' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
+                                                        'bg-primary/10 text-primary border-primary/20 animate-pulse'
                                                     }`}>
                                                     {job.status}
                                                 </span>
