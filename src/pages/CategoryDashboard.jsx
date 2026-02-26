@@ -88,7 +88,7 @@ const CategoryDashboard = () => {
                         <motion.div
                             key={cat.id}
                             variants={item}
-                            onClick={() => navigate(`/leads?category=${cat.id}`)}
+                            onClick={() => navigate(`/sales/leads?category=${cat.id}`)}
                             className="group bg-gray-900 border border-gray-800 hover:border-blue-500/50 p-6 rounded-3xl transition-all cursor-pointer relative overflow-hidden ring-1 ring-white/5 hover:ring-blue-500/20 shadow-xl"
                         >
                             {/* Decorative Background */}

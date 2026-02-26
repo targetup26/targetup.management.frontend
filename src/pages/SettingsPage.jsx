@@ -30,7 +30,9 @@ export default function SettingsPage() {
     const fetchEmployees = async () => {
         try {
             const res = await api.get('/employees');
-            setEmployees(res.data);
+            // Safe handling: check if response has data.data (paginated) or is the array itself
+            const employeeData = Array.isArray(res.data) ? res.data : (res.data.data || []);
+            setEmployees(employeeData);
         } catch (err) {
             console.error(err);
         }

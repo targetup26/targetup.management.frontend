@@ -54,14 +54,14 @@ const LeadJobHistoryPage = () => {
                                 </td>
                                 <td className="p-4">
                                     <span className={`px-2 py-1 rounded text-xs font-bold uppercase ${job.status === 'completed' ? 'bg-green-500/10 text-green-500' :
-                                            job.status === 'failed' ? 'bg-red-500/10 text-red-500' :
-                                                'bg-blue-500/10 text-blue-500'
+                                        job.status === 'failed' ? 'bg-red-500/10 text-red-500' :
+                                            'bg-blue-500/10 text-blue-500'
                                         }`}>
                                         {job.status}
                                     </span>
                                 </td>
                                 <td className="p-4 font-mono">
-                                    {job.total_results || '-'}
+                                    {job.leads_extracted || '-'}
                                 </td>
                             </tr>
                         ))}

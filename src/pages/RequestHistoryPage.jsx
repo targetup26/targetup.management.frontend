@@ -152,7 +152,7 @@ const RequestHistoryPage = () => {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-2">
-                                                    <span className="text-blue-400 font-bold text-lg">{job.total_results}</span>
+                                                    <span className="text-blue-400 font-bold text-lg">{job.leads_extracted}</span>
                                                     <span className="text-[10px] text-gray-600 uppercase">leads</span>
                                                 </div>
                                             </td>

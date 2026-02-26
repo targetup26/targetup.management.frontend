@@ -19,7 +19,12 @@ export default function ManualEntryModal({ isOpen, onClose, onSuccess, editingEn
 
     useEffect(() => {
         if (isOpen) {
-            api.get('/employees').then(res => setEmployees(res.data)).catch(console.error);
+            api.get('/employees')
+                .then(res => {
+                    const data = Array.isArray(res.data) ? res.data : (res.data.data || []);
+                    setEmployees(data);
+                })
+                .catch(console.error);
 
             // If editing, populate form with existing data
             if (editingEntry) {

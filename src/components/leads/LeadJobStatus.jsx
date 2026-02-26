@@ -15,14 +15,14 @@ const LeadJobStatus = ({ jobId, onComplete }) => {
         const checkStatus = async () => {
             try {
                 const res = await leadService.getJobStatus(jobId);
-                const { status: jobStatus, progress: jobProgress, total_results } = res.data;
+                const { status: jobStatus, progress: jobProgress, leads_extracted } = res.data;
 
                 setStatus(jobStatus);
                 setProgress(jobProgress || 0);
 
                 if (jobStatus === 'completed') {
                     clearInterval(interval);
-                    if (onComplete) onComplete(total_results);
+                    if (onComplete) onComplete(leads_extracted);
                 } else if (jobStatus === 'failed') {
                     clearInterval(interval);
                     setError('Extraction failed. Please try again.');

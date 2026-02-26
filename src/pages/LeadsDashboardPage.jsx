@@ -20,7 +20,7 @@ const LeadsDashboardPage = () => {
     const fetchLeads = async () => {
         setLoading(true);
         try {
-            const url = categoryId ? `/categories/${categoryId}/leads` : '/leads';
+            const url = categoryId ? `/leads?category=${categoryId}` : '/leads';
             const res = await api.get(url);
             setLeads(res.data.data || res.data);
         } catch (err) {
@@ -168,8 +168,8 @@ const LeadsDashboardPage = () => {
                                     <span className="text-[10px] text-gray-500 font-bold">{lead.classification_confidence}% MATCH</span>
                                 </div>
 
-                                {lead.google_url && (
-                                    <a href={lead.google_url} target="_blank" rel="noreferrer" className="text-gray-600 hover:text-green-500 transition-colors">
+                                {lead.google_maps_url && (
+                                    <a href={lead.google_maps_url} target="_blank" rel="noreferrer" className="text-gray-600 hover:text-green-500 transition-colors">
                                         <FiExternalLink />
                                     </a>
                                 )}

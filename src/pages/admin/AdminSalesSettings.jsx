@@ -140,7 +140,7 @@ const AdminSalesSettings = () => {
                                                 </span>
                                             </td>
                                             <td className="px-8 py-5 font-bold text-sm tabular-nums">
-                                                {job.total_results}
+                                                {job.leads_extracted}
                                             </td>
                                         </tr>
                                     ))}
