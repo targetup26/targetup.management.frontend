@@ -345,29 +345,53 @@ export default function EmployeeDetailsPage() {
                                         </div>
                                     </div>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                                        {employee.Submissions?.filter(s => s.Template?.type === 'join').flatMap(s => s.Attachments || []).length > 0 ? (
-                                            employee.Submissions?.filter(s => s.Template?.type === 'join').flatMap(s => s.Attachments || []).map(att => (
-                                                <div key={att.id} className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-col gap-4 group hover:bg-white/[0.05] hover:border-primary/20 transition-all">
-                                                    <div className="flex justify-between items-center">
-                                                        <div className="text-2xl drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">📂</div>
-                                                        <a
-                                                            href={`${apiBaseUrl}/api/storage/download/${att.FileMetadata?.id || att.file_metadata_id}?token=${localStorage.getItem('token')}&download=true`}
-                                                            className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-text-secondary hover:text-white hover:bg-primary transition-all"
-                                                        >
-                                                            <HiDownload />
-                                                        </a>
+                                        {/* Combined view of Submission Attachments and Direct Vault Files */}
+                                        {((employee.Submissions?.filter(s => s.Template?.type === 'join').flatMap(s => s.Attachments || []) || []).length > 0 ||
+                                            (employee.VaultFiles?.length > 0)) ? (
+                                            <>
+                                                {/* 1. Show submission attachments */}
+                                                {(employee.Submissions?.filter(s => s.Template?.type === 'join').flatMap(s => s.Attachments || []) || []).map(att => (
+                                                    <div key={`att-${att.id}`} className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-col gap-4 group hover:bg-white/[0.05] hover:border-primary/20 transition-all">
+                                                        <div className="flex justify-between items-center">
+                                                            <div className="text-2xl drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">📂</div>
+                                                            <a
+                                                                href={`${apiBaseUrl}/api/storage/download/${att.FileMetadata?.id || att.file_metadata_id}?token=${localStorage.getItem('token')}&download=true`}
+                                                                className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-text-secondary hover:text-white hover:bg-primary transition-all"
+                                                            >
+                                                                <HiDownload />
+                                                            </a>
+                                                        </div>
+                                                        <div className="flex-1 overflow-hidden space-y-1">
+                                                            <p className="text-[9px] font-black text-primary uppercase tracking-widest truncate">{att.field_name?.replace(/_/g, ' ') || 'Join Document'}</p>
+                                                            <p className="text-[10px] font-bold text-white/50 truncate italic">{att.FileMetadata?.original_name || 'vault_record.dat'}</p>
+                                                            <p className="text-[8px] font-mono text-white/20 uppercase tracking-[0.2em]">{((att.FileMetadata?.file_size || 0) / 1024).toFixed(0)} KB • SECURE</p>
+                                                        </div>
                                                     </div>
-                                                    <div className="flex-1 overflow-hidden space-y-1">
-                                                        <p className="text-[9px] font-black text-primary uppercase tracking-widest truncate">{att.field_name?.replace(/_/g, ' ')}</p>
-                                                        <p className="text-[10px] font-bold text-white/50 truncate italic">{att.FileMetadata?.original_name || 'vault_record.dat'}</p>
-                                                        <p className="text-[8px] font-mono text-white/20 uppercase tracking-[0.2em]">{((att.FileMetadata?.file_size || 0) / 1024).toFixed(0)} KB • SECURE</p>
+                                                ))}
+                                                {/* 2. Show directly linked files not covered above */}
+                                                {(employee.VaultFiles || []).filter(vf => !employee.Submissions?.flatMap(s => s.Attachments || []).some(att => att.file_metadata_id === vf.id)).map(file => (
+                                                    <div key={`file-${file.id}`} className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-col gap-4 group hover:bg-white/[0.05] hover:border-primary/20 transition-all">
+                                                        <div className="flex justify-between items-center">
+                                                            <div className="text-2xl drop-shadow-[0_0_10px_rgba(255,255,255,0.2)] text-glow">📄</div>
+                                                            <a
+                                                                href={`${apiBaseUrl}/api/storage/download/${file.id}?token=${localStorage.getItem('token')}&download=true`}
+                                                                className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-text-secondary hover:text-white hover:bg-primary transition-all"
+                                                            >
+                                                                <HiDownload />
+                                                            </a>
+                                                        </div>
+                                                        <div className="flex-1 overflow-hidden space-y-1">
+                                                            <p className="text-[9px] font-black text-accent uppercase tracking-widest truncate">Vault Asset</p>
+                                                            <p className="text-[10px] font-bold text-white/50 truncate italic">{file.original_name}</p>
+                                                            <p className="text-[8px] font-mono text-white/20 uppercase tracking-[0.2em]">{((file.file_size || 0) / 1024).toFixed(0)} KB • LINKED</p>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            ))
+                                                ))}
+                                            </>
                                         ) : (
                                             <div className="col-span-full py-12 text-center border-2 border-dashed border-white/5 rounded-3xl">
                                                 <HiIdentification className="text-4xl mx-auto mb-3 text-white/5" />
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-text-muted">No Join Form Attachments found in Vault</p>
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-text-muted">No Documents found in Vault</p>
                                             </div>
                                         )}
                                     </div>

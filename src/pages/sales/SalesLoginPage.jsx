@@ -8,6 +8,7 @@ import { HiOutlineLightningBolt, HiOutlineShieldCheck, HiOutlineArrowRight } fro
 const SalesLoginPage = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [rememberMe, setRememberMe] = useState(true);
     const [loading, setLoading] = useState(false);
     const { login } = useAuth();
     const navigate = useNavigate();
@@ -77,6 +78,19 @@ const SalesLoginPage = () => {
                                 placeholder="••••••••"
                                 required
                             />
+                        </div>
+
+                        <div className="flex items-center gap-2 px-1">
+                            <input
+                                type="checkbox"
+                                id="rememberMe"
+                                className="w-4 h-4 rounded border-white/10 bg-white/5 checked:bg-primary checked:border-primary transition-all cursor-pointer"
+                                checked={rememberMe}
+                                onChange={(e) => setRememberMe(e.target.checked)}
+                            />
+                            <label htmlFor="rememberMe" className="text-[10px] font-black uppercase tracking-widest text-text-secondary cursor-pointer hover:text-primary transition-colors">
+                                Remember Intel Link
+                            </label>
                         </div>
 
                         <button

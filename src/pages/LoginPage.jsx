@@ -10,6 +10,7 @@ export default function LoginPage() {
     const { t } = useTranslation();
     const { login } = useAuth();
     const [formData, setFormData] = useState({ username: '', password: '' });
+    const [rememberMe, setRememberMe] = useState(true);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [systemStatus, setSystemStatus] = useState('Checking...');
@@ -149,6 +150,18 @@ export default function LoginPage() {
                                         required
                                     />
                                 </div>
+                            </div>
+
+                            <div className="flex items-center justify-between px-1">
+                                <label className="flex items-center gap-2 cursor-pointer group">
+                                    <input
+                                        type="checkbox"
+                                        className="w-4 h-4 rounded border-white/10 bg-white/5 checked:bg-primary checked:border-primary transition-all cursor-pointer"
+                                        checked={rememberMe}
+                                        onChange={(e) => setRememberMe(e.target.checked)}
+                                    />
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-text-secondary group-hover:text-primary transition-colors">Remember Session</span>
+                                </label>
                             </div>
 
                             <button
