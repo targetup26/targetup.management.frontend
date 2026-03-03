@@ -10,9 +10,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico'],
       manifest: {
-        name: 'SRO Sales Dashboard',
-        short_name: 'SRO Sales',
-        description: 'Enterprise Leads Extraction & Sales Intelligence',
+        name: 'Targetup Attendance',
+        short_name: 'Attendance',
+        description: 'Team Attendance & Management Portal',
         theme_color: '#0f172a',
         background_color: '#0f172a',
         display: 'standalone',
@@ -22,15 +22,15 @@ export default defineConfig({
         icons: []
       },
       devOptions: {
-        enabled: false // Disable in dev to avoid icon errors
+        enabled: false
       }
     })
   ],
   server: {
-    host: '0.0.0.0', // Listen on all network interfaces to allow access from 26.32.68.132
+    host: '0.0.0.0',
     port: 5173,
     hmr: {
-      host: '26.32.68.132'
+      host: '192.168.100.56'
     }
   }
 })

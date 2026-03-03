@@ -1,5 +1,5 @@
 import React from 'react';
-import { HiPlus, HiTrash, HiPencil } from 'react-icons/hi';
+import { HiPlus, HiTrash, HiPencil, HiTemplate, HiSparkles, HiX } from 'react-icons/hi';
 
 export default function VisualFormBuilder({ schema, onChange }) {
     // Ensure schema has sections
@@ -140,6 +140,3 @@ export default function VisualFormBuilder({ schema, onChange }) {
         </div>
     );
 };
-
-// Simple Icon component for the delete button if implicit imports fail
-const HiX = () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>;
