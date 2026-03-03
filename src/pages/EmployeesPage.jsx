@@ -177,8 +177,7 @@ export default function EmployeesPage() {
                                                 className="input-pro pl-12"
                                                 value={formData.code}
                                                 onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                                                required
-                                                placeholder="EMP-XYZ"
+                                                placeholder="LEAVE BLANK FOR AUTO-GEN"
                                             />
                                         </div>
                                     </div>

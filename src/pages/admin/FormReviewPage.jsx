@@ -234,7 +234,7 @@ export default function FormReviewPage() {
                         </button>
                     </section>
 
-                    {submission.status?.toUpperCase() === 'PENDING' && (
+                    {(submission.status?.toUpperCase() === 'PENDING' || submission.status?.toUpperCase() === 'SUBMITTED') && (
                         <div className="grid grid-cols-1 gap-4">
                             <button
                                 onClick={() => handleAction('APPROVE')}

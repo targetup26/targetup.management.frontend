@@ -13,6 +13,7 @@ const StatusBadge = ({ status }) => {
     const capsStatus = status?.toUpperCase() || 'UNKNOWN';
     const configs = {
         'PENDING': { color: 'yellow-400', label: 'Pending Review' },
+        'SUBMITTED': { color: 'yellow-400', label: 'Submitted' },
         'APPROVED': { color: 'green-400', label: 'Authorized' },
         'REJECTED': { color: 'red-400', label: 'Denied' },
         'DRAFT': { color: 'gray-400', label: 'Draft Mode' }
@@ -263,7 +264,7 @@ const SubmissionDetailModal = ({ submissionId, onClose, onAction, jobRoles = [] 
                             <span>PRINT DOCUMENT</span>
                         </button>
 
-                        {submission.status?.toUpperCase() === 'PENDING' && (
+                        {(submission.status?.toUpperCase() === 'PENDING' || submission.status?.toUpperCase() === 'SUBMITTED') && (
                             <div className="grid grid-cols-2 gap-4 mt-10">
                                 <button
                                     onClick={() => onAction(submission.id, 'APPROVE')}
@@ -497,7 +498,7 @@ export default function FormSubmissionsPage() {
                                         </td>
                                         <td className="px-6 py-5">
                                             <div className="flex items-center justify-end gap-2">
-                                                {sub.status?.toUpperCase() === 'PENDING' && (
+                                                {(sub.status?.toUpperCase() === 'PENDING' || sub.status?.toUpperCase() === 'SUBMITTED') && (
                                                     <>
                                                         <button
                                                             onClick={(e) => { e.stopPropagation(); handleAction(sub.id, 'APPROVE'); }}
