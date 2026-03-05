@@ -71,6 +71,8 @@ export default function AttendanceTable({ data, onEdit }) {
                                         <div className="flex items-center gap-1.5">
                                             {entry.source === 'DEVICE' ? (
                                                 <><HiDeviceMobile className="text-primary" /> <span className="uppercase font-bold tracking-tighter">{t('device')}</span></>
+                                            ) : entry.source === 'DESKTOP' || entry.source === 'DESKTOP_APP' ? (
+                                                <><HiDeviceMobile className="text-blue-400" /> <span className="uppercase font-bold tracking-tighter text-blue-400">DESKTOP</span></>
                                             ) : (
                                                 <><HiPencilAlt className="text-warning" /> <span className="uppercase font-bold tracking-tighter">{t('manual')}</span></>
                                             )}
