@@ -29,8 +29,6 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5173,
-    hmr: {
-      host: '192.168.100.56'
-    }
+    hmr: true // Let it use the default hostname
   }
 })
