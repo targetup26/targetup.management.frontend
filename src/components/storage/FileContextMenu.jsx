@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { HiDownload, HiTrash, HiPencilAlt, HiEye, HiFolderOpen } from 'react-icons/hi';
+import { HiDownload, HiTrash, HiPencilAlt, HiEye, HiFolderOpen, HiShare } from 'react-icons/hi';
 
 export default function FileContextMenu({ x, y, file, onClose, onAction }) {
     if (!file) return null;
@@ -17,6 +17,12 @@ export default function FileContextMenu({ x, y, file, onClose, onAction }) {
             label: 'Download',
             icon: HiDownload,
             show: !file.is_folder
+        },
+        {
+            id: 'share',
+            label: file.is_folder ? 'Share Folder' : 'Share Link',
+            icon: HiShare,
+            show: true
         },
         {
             id: 'rename',

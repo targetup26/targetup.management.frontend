@@ -49,7 +49,13 @@ import PrintSettingsPage from './pages/admin/PrintSettingsPage';
 import OrganizationPage from './pages/admin/OrganizationPage';
 import TaxonomyManagementPage from './pages/admin/TaxonomyManagementPage';
 import MyFilesPage from './pages/MyFilesPage';
+import ShareDownloadPage from './pages/ShareDownloadPage';
+import ShareFolderPage from './pages/ShareFolderPage';
 import SalesLayout from './components/SalesLayout';
+import LeadDetailPage from './pages/sales/LeadDetailPage';
+import LeadCategoryDashboard from './pages/sales/LeadCategoryDashboard';
+import LeadSubcategoryPage from './pages/sales/LeadSubcategoryPage';
+import CategoryAllLeadsPage from './pages/sales/CategoryAllLeadsPage';
 
 
 function App() {
@@ -76,6 +82,9 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/sales/login" element={<SalesLoginPage />} />
           <Route path="/join" element={<JoinFormPage />} />
+          {/* Public Share Pages - No Auth Required */}
+          <Route path="/share/:token" element={<ShareDownloadPage />} />
+          <Route path="/share-folder/:token" element={<ShareFolderPage />} />
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
@@ -125,8 +134,12 @@ function App() {
 
             {/* Sales Portal Gateway */}
             <Route path="/sales" element={<SalesLayout />}>
-              <Route index element={<CategoryDashboard />} />
-              <Route path="categories" element={<CategoryDashboard />} />
+              <Route index element={<LeadCategoryDashboard />} />
+              <Route path="categories" element={<LeadCategoryDashboard />} />
+              <Route path="category/:id" element={<LeadSubcategoryPage />} />
+              <Route path="category/:id/all" element={<CategoryAllLeadsPage />} />
+              <Route path="subcategory/:id" element={<CategoryAllLeadsPage />} />
+              <Route path="lead/:leadId" element={<LeadDetailPage />} />
               <Route path="request" element={<LeadsRequestPage />} />
               <Route path="dashboard" element={<LeadsDashboardPage />} />
               <Route path="leads" element={<LeadsDashboardPage />} />

@@ -41,12 +41,12 @@ export default function EmployeeDetailsPage() {
     const [activeTab, setActiveTab] = useState('overview');
     const [apiBaseUrl, setApiBaseUrl] = useState('');
 
-    // [User Creation State]
     const [showUserModal, setShowUserModal] = useState(false);
     const [userPassword, setUserPassword] = useState('');
     const [userRole, setUserRole] = useState('EMPLOYEE');
     const [creating, setCreating] = useState(false);
     const [successData, setSuccessData] = useState(null);
+    const [vaultPreview, setVaultPreview] = useState(null); // { url, name, mime }
 
     useEffect(() => {
         const fetchEmployee = async () => {
@@ -336,66 +336,121 @@ export default function EmployeeDetailsPage() {
                                 </section>
 
                                 <section className="glass-panel-pro p-8">
-                                    <div className="flex justify-between items-center mb-8">
-                                        <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.3em] flex items-center gap-2">
-                                            <HiIdentification className="text-lg" /> Personnel Vault (Join Documents)
-                                        </h3>
-                                        <div className="flex items-center gap-2 text-[9px] font-mono text-white/20 uppercase">
-                                            <HiShieldCheck className="text-green-500/50" /> Secure Encryption Active
-                                        </div>
-                                    </div>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                                        {/* Combined view of Submission Attachments and Direct Vault Files */}
-                                        {((employee.Submissions?.filter(s => s.Template?.type === 'join').flatMap(s => s.Attachments || []) || []).length > 0 ||
-                                            (employee.VaultFiles?.length > 0)) ? (
-                                            <>
-                                                {/* 1. Show submission attachments */}
-                                                {(employee.Submissions?.filter(s => s.Template?.type === 'join').flatMap(s => s.Attachments || []) || []).map(att => (
-                                                    <div key={`att-${att.id}`} className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-col gap-4 group hover:bg-white/[0.05] hover:border-primary/20 transition-all">
-                                                        <div className="flex justify-between items-center">
-                                                            <div className="text-2xl drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">📂</div>
-                                                            <a
-                                                                href={`${apiBaseUrl}/api/storage/download/${att.FileMetadata?.id || att.file_metadata_id}?token=${localStorage.getItem('token')}&download=true`}
-                                                                className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-text-secondary hover:text-white hover:bg-primary transition-all"
-                                                            >
-                                                                <HiDownload />
-                                                            </a>
-                                                        </div>
-                                                        <div className="flex-1 overflow-hidden space-y-1">
-                                                            <p className="text-[9px] font-black text-primary uppercase tracking-widest truncate">{att.field_name?.replace(/_/g, ' ') || 'Join Document'}</p>
-                                                            <p className="text-[10px] font-bold text-white/50 truncate italic">{att.FileMetadata?.original_name || 'vault_record.dat'}</p>
-                                                            <p className="text-[8px] font-mono text-white/20 uppercase tracking-[0.2em]">{((att.FileMetadata?.file_size || 0) / 1024).toFixed(0)} KB • SECURE</p>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                                {/* 2. Show directly linked files not covered above */}
-                                                {(employee.VaultFiles || []).filter(vf => !employee.Submissions?.flatMap(s => s.Attachments || []).some(att => att.file_metadata_id === vf.id)).map(file => (
-                                                    <div key={`file-${file.id}`} className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-col gap-4 group hover:bg-white/[0.05] hover:border-primary/20 transition-all">
-                                                        <div className="flex justify-between items-center">
-                                                            <div className="text-2xl drop-shadow-[0_0_10px_rgba(255,255,255,0.2)] text-glow">📄</div>
-                                                            <a
-                                                                href={`${apiBaseUrl}/api/storage/download/${file.id}?token=${localStorage.getItem('token')}&download=true`}
-                                                                className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-text-secondary hover:text-white hover:bg-primary transition-all"
-                                                            >
-                                                                <HiDownload />
-                                                            </a>
-                                                        </div>
-                                                        <div className="flex-1 overflow-hidden space-y-1">
-                                                            <p className="text-[9px] font-black text-accent uppercase tracking-widest truncate">Vault Asset</p>
-                                                            <p className="text-[10px] font-bold text-white/50 truncate italic">{file.original_name}</p>
-                                                            <p className="text-[8px] font-mono text-white/20 uppercase tracking-[0.2em]">{((file.file_size || 0) / 1024).toFixed(0)} KB • LINKED</p>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </>
-                                        ) : (
-                                            <div className="col-span-full py-12 text-center border-2 border-dashed border-white/5 rounded-3xl">
-                                                <HiIdentification className="text-4xl mx-auto mb-3 text-white/5" />
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-text-muted">No Documents found in Vault</p>
-                                            </div>
-                                        )}
-                                    </div>
-                                </section>
+                                     <div className="flex justify-between items-center mb-8">
+                                         <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.3em] flex items-center gap-2">
+                                             <HiIdentification className="text-lg" /> Personnel Vault (Join Documents)
+                                         </h3>
+                                         <div className="flex items-center gap-2 text-[9px] font-mono text-white/20 uppercase">
+                                             <HiShieldCheck className="text-green-500/50" /> Secure Encryption Active
+                                         </div>
+                                     </div>
+
+                                     {/* Helper: get friendly label from field_name */}
+                                     {(() => {
+                                         // Build unified doc list
+                                         const joinAttachments = (employee.Submissions?.filter(s => s.Template?.type === 'join').flatMap(s => s.Attachments || []) || []);
+                                         const vaultFiles = (employee.VaultFiles || []).filter(vf => !joinAttachments.some(att => att.file_metadata_id === vf.id));
+
+                                         const allDocs = [
+                                             ...joinAttachments.map(att => ({
+                                                 id: `att-${att.id}`,
+                                                 fileId: att.FileMetadata?.id || att.file_metadata_id,
+                                                 name: att.FileMetadata?.original_name || 'document',
+                                                 label: att.field_name
+                                                     ? att.field_name.replace(/\.[^.]+$/, '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+                                                     : 'Join Document',
+                                                 mime: att.FileMetadata?.mime_type || '',
+                                                 size: att.FileMetadata?.file_size || 0,
+                                                 isVault: false,
+                                             })),
+                                             ...vaultFiles.map(file => ({
+                                                 id: `file-${file.id}`,
+                                                 fileId: file.id,
+                                                 name: file.original_name,
+                                                 label: file.original_name ? file.original_name.replace(/\.[^.]+$/, '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : 'Vault Asset',
+                                                 mime: file.mime_type || '',
+                                                 size: file.file_size || 0,
+                                                 isVault: true,
+                                             }))
+                                         ];
+
+                                         const getIcon = (mime) => {
+                                             if (mime.startsWith('image/')) return '🖼️';
+                                             if (mime.includes('pdf')) return '📕';
+                                             if (mime.startsWith('video/')) return '🎬';
+                                             if (mime.startsWith('audio/')) return '🎵';
+                                             if (mime.includes('word') || mime.includes('document')) return '📝';
+                                             if (mime.includes('sheet') || mime.includes('excel')) return '📊';
+                                             if (mime.includes('zip') || mime.includes('rar')) return '🗜️';
+                                             return '📄';
+                                         };
+
+                                         const fmtSize = (b) => {
+                                             if (!b) return '—';
+                                             if (b < 1024) return `${b} B`;
+                                             if (b < 1024 * 1024) return `${(b/1024).toFixed(0)} KB`;
+                                             return `${(b/1024/1024).toFixed(1)} MB`;
+                                         };
+
+                                         if (allDocs.length === 0) return (
+                                             <div className="col-span-full py-12 text-center border-2 border-dashed border-white/5 rounded-3xl">
+                                                 <HiIdentification className="text-4xl mx-auto mb-3 text-white/5" />
+                                                 <p className="text-[10px] font-black uppercase tracking-widest text-text-muted">No Documents found in Vault</p>
+                                             </div>
+                                         );
+
+                                         return (
+                                             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                                                 {allDocs.map(doc => {
+                                                     const isImage = doc.mime.startsWith('image/');
+                                                     const downloadUrl = `${apiBaseUrl}/storage/download/${doc.fileId}?token=${localStorage.getItem('token')}&download=true`;
+                                                     const previewUrl = `${apiBaseUrl}/storage/download/${doc.fileId}?token=${localStorage.getItem('token')}`;
+
+                                                     return (
+                                                         <div key={doc.id} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] bg-white/[0.02] hover:border-primary/30 transition-all">
+                                                             {/* Thumbnail / Icon area */}
+                                                             <div
+                                                                 className="relative h-32 bg-white/[0.02] flex items-center justify-center cursor-pointer overflow-hidden"
+                                                                 onClick={() => setVaultPreview({ url: previewUrl, name: doc.name, mime: doc.mime })}
+                                                             >
+                                                                 {isImage ? (
+                                                                     <img
+                                                                         src={previewUrl}
+                                                                         alt={doc.name}
+                                                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                                         onError={e => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }}
+                                                                     />
+                                                                 ) : null}
+                                                                 <div className={`absolute inset-0 flex items-center justify-center text-4xl ${isImage ? 'hidden' : 'flex'}`}>
+                                                                     {getIcon(doc.mime)}
+                                                                 </div>
+                                                                 {/* Hover overlay */}
+                                                                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                                     <span className="text-white text-xs font-bold bg-white/20 px-3 py-1.5 rounded-full backdrop-blur-sm">Preview</span>
+                                                                 </div>
+                                                             </div>
+
+                                                             {/* Info row */}
+                                                             <div className="px-3 py-2.5 flex items-start justify-between gap-2">
+                                                                 <div className="flex-1 min-w-0">
+                                                                     <p className={`text-[9px] font-black uppercase tracking-widest truncate ${doc.isVault ? 'text-accent' : 'text-primary'}`}>{doc.label}</p>
+                                                                     <p className="text-[9px] font-mono text-white/30 truncate mt-0.5">{fmtSize(doc.size)}</p>
+                                                                 </div>
+                                                                 <a
+                                                                     href={downloadUrl}
+                                                                     onClick={e => e.stopPropagation()}
+                                                                     className="shrink-0 w-7 h-7 rounded-lg bg-white/5 hover:bg-primary hover:text-black flex items-center justify-center text-text-secondary transition-all"
+                                                                 >
+                                                                     <HiDownload className="text-sm" />
+                                                                 </a>
+                                                             </div>
+                                                         </div>
+                                                     );
+                                                 })}
+                                             </div>
+                                         );
+                                     })()}
+                                 </section>
                             </div>
                         )}
 
@@ -429,6 +484,59 @@ export default function EmployeeDetailsPage() {
                     </motion.div>
                 </AnimatePresence>
             </div>
+
+            {/* Vault Document Preview Lightbox */}
+            <AnimatePresence>
+                {vaultPreview && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-black/90 backdrop-blur-xl p-4"
+                        onClick={() => setVaultPreview(null)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.9, y: 20 }}
+                            className="relative max-w-4xl w-full max-h-[85vh] flex flex-col rounded-2xl overflow-hidden border border-white/10 bg-[#0a0a14]"
+                            onClick={e => e.stopPropagation()}
+                        >
+                            {/* Header */}
+                            <div className="flex items-center justify-between px-5 py-3 border-b border-white/[0.06] bg-white/[0.03]">
+                                <p className="text-xs font-bold text-white/70 truncate">{vaultPreview.name}</p>
+                                <div className="flex items-center gap-2">
+                                    <a
+                                        href={`${vaultPreview.url}&download=true`}
+                                        className="px-3 py-1.5 rounded-lg bg-primary/20 text-primary text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-black transition-all flex items-center gap-1.5"
+                                    >
+                                        <HiDownload /> Download
+                                    </a>
+                                    <button onClick={() => setVaultPreview(null)} className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition-all">
+                                        <HiX />
+                                    </button>
+                                </div>
+                            </div>
+                            {/* Content */}
+                            <div className="flex-1 overflow-auto flex items-center justify-center bg-black/40 min-h-[400px]">
+                                {vaultPreview.mime?.startsWith('image/') ? (
+                                    <img src={vaultPreview.url} alt={vaultPreview.name} className="max-w-full max-h-[70vh] object-contain" />
+                                ) : vaultPreview.mime?.includes('pdf') ? (
+                                    <iframe src={vaultPreview.url} className="w-full h-[70vh]" title={vaultPreview.name} />
+                                ) : (
+                                    <div className="text-center py-16">
+                                        <div className="text-6xl mb-4">📄</div>
+                                        <p className="text-white/50 text-sm mb-4">Preview not available for this file type</p>
+                                        <a href={`${vaultPreview.url}&download=true`} className="px-6 py-3 rounded-xl bg-primary text-black text-xs font-black uppercase tracking-widest">
+                                            Download File
+                                        </a>
+                                    </div>
+                                )}
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* User Account Modal */}
             <AnimatePresence>

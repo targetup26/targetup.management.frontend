@@ -38,6 +38,7 @@ export default function FileManagerPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [previewingFile, setPreviewingFile] = useState(null);
     const [thumbnails, setThumbnails] = useState({});
+    const [failedThumbnails, setFailedThumbnails] = useState(new Set());
 
     // New State for Upgrades
     const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
@@ -45,6 +46,7 @@ export default function FileManagerPage() {
     const [navigationStack, setNavigationStack] = useState([]);
     const [contextMenu, setContextMenu] = useState(null);
     const [inputModal, setInputModal] = useState({ isOpen: false, type: 'folder', item: null });
+    const [shareModal, setShareModal] = useState({ isOpen: false, file: null, link: null, loading: false });
 
     useEffect(() => {
         loadDepartments();
@@ -190,6 +192,7 @@ export default function FileManagerPage() {
 
     const loadContent = (file) => {
         if (thumbnails[file.id]) return thumbnails[file.id];
+        if (failedThumbnails.has(file.id)) return null; // Don't retry failed
 
         const token = localStorage.getItem('token');
         const baseUrl = apiService.defaults.baseURL;
@@ -197,6 +200,11 @@ export default function FileManagerPage() {
 
         setThumbnails(prev => ({ ...prev, [file.id]: url }));
         return url;
+    };
+
+    const handleThumbnailError = (fileId) => {
+        setFailedThumbnails(prev => new Set([...prev, fileId]));
+        setThumbnails(prev => { const next = { ...prev }; delete next[fileId]; return next; });
     };
 
     const handlePreview = (file) => {
@@ -212,7 +220,7 @@ export default function FileManagerPage() {
 
     useEffect(() => {
         files.forEach(file => {
-            if (file.mime_type?.startsWith('image/')) {
+            if (file.mime_type?.startsWith('image/') && !failedThumbnails.has(file.id)) {
                 loadContent(file);
             }
         });
@@ -226,12 +234,24 @@ export default function FileManagerPage() {
         } catch (err) { console.error(err); }
     };
 
+    const generateShareLink = async (file) => {
+        setShareModal({ isOpen: true, file, link: null, loading: true });
+        try {
+            const res = await apiService.post(`/storage/share/${file.id}`, { expires_in_days: 7 });
+            setShareModal(prev => ({ ...prev, link: res.data.share_url, loading: false }));
+        } catch (err) {
+            console.error('Share link error:', err);
+            setShareModal(prev => ({ ...prev, loading: false, link: null }));
+        }
+    };
+
     const handleAction = (action, file) => {
         switch (action) {
             case 'open': handlePreview(file); break;
             case 'download': downloadFile(file); break;
             case 'rename': openRenameModal(file); break;
             case 'delete': deleteFile(file); break;
+            case 'share': generateShareLink(file); break;
             default: break;
         }
     };
@@ -446,7 +466,12 @@ export default function FileManagerPage() {
                                                 {file.is_folder ? (
                                                     <HiFolder className="text-amber-400 text-6xl drop-shadow-md" />
                                                 ) : thumbnails[file.id] ? (
-                                                    <img src={thumbnails[file.id]} alt={file.original_name} className="w-full h-full object-cover" />
+                                                    <img
+                                                        src={thumbnails[file.id]}
+                                                        alt={file.original_name}
+                                                        className="w-full h-full object-cover"
+                                                        onError={() => handleThumbnailError(file.id)}
+                                                    />
                                                 ) : getFileIcon(file)}
                                             </div>
 
@@ -558,6 +583,84 @@ export default function FileManagerPage() {
                 submitLabel={inputModal.type === 'create' ? 'Create' : 'Save Changes'}
                 icon={inputModal.type === 'create' ? <HiFolderAdd /> : <HiPencilAlt className="text-amber-400" />}
             />
+
+            {/* Share Link Modal */}
+            <AnimatePresence>
+                {shareModal.isOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[300] flex items-center justify-center bg-black/60 backdrop-blur-sm"
+                        onClick={() => setShareModal({ isOpen: false, file: null, link: null, loading: false })}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.95, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.95, opacity: 0 }}
+                            className="glass-panel-pro p-8 w-full max-w-lg mx-4 rounded-2xl border-white/10"
+                            onClick={e => e.stopPropagation()}
+                        >
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 text-lg">🔗</div>
+                                <div>
+                                    <h3 className="font-black text-white text-sm uppercase tracking-widest">Share Link</h3>
+                                    <p className="text-xs text-text-secondary truncate max-w-xs">{shareModal.file?.original_name}</p>
+                                </div>
+                            </div>
+
+                            {shareModal.loading ? (
+                                <div className="flex items-center justify-center gap-3 py-6">
+                                    <div className="w-6 h-6 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
+                                    <span className="text-sm text-text-secondary">Generating secure link...</span>
+                                </div>
+                            ) : shareModal.link ? (
+                                <div className="space-y-4">
+                                    <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4 flex items-center gap-3">
+                                        <span className="text-xs text-white/60 break-all flex-1 font-mono">{shareModal.link}</span>
+                                        <button
+                                            onClick={() => {
+                                                if (navigator.clipboard) {
+                                                    navigator.clipboard.writeText(shareModal.link);
+                                                } else {
+                                                    const el = document.createElement('textarea');
+                                                    el.value = shareModal.link;
+                                                    document.body.appendChild(el);
+                                                    el.select();
+                                                    document.execCommand('copy');
+                                                    document.body.removeChild(el);
+                                                }
+                                            }}
+                                            className="shrink-0 px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 text-xs font-bold rounded-lg border border-blue-500/20 transition-all"
+                                        >
+                                            Copy
+                                        </button>
+                                    </div>
+                                    <p className="text-[10px] text-text-secondary text-center uppercase tracking-widest">
+                                        ⏰ Expires in 7 days · Anyone with this link can download
+                                    </p>
+                                    <div className="flex gap-3">
+                                        <button
+                                            onClick={() => window.open(shareModal.link, '_blank')}
+                                            className="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white text-xs font-bold uppercase tracking-widest transition"
+                                        >
+                                            Open Page
+                                        </button>
+                                        <button
+                                            onClick={() => setShareModal({ isOpen: false, file: null, link: null, loading: false })}
+                                            className="flex-1 py-2.5 rounded-xl bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 text-xs font-bold uppercase tracking-widest transition"
+                                        >
+                                            Done
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <p className="text-red-400 text-sm text-center py-4">Failed to generate link. Try again.</p>
+                            )}
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

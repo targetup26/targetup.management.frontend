@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { motion } from 'framer-motion';
-import { FiArrowLeft, FiPhone, FiMail, FiMapPin, FiGlobe, FiDownload, FiTag } from 'react-icons/fi';
+import { FiArrowLeft, FiPhone, FiMail, FiMapPin, FiGlobe, FiDownload, FiTag, FiEye } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
 
 const CategoryAllLeadsPage = () => {
@@ -112,6 +112,12 @@ const CategoryAllLeadsPage = () => {
                                             </div>
                                         )}
                                     </div>
+                                    <button
+                                        onClick={() => navigate(`/sales/lead/${lead.id}`)}
+                                        className="flex items-center gap-1.5 px-4 py-2 bg-blue-600/10 hover:bg-blue-600/20 text-blue-400 border border-blue-500/20 rounded-xl text-xs font-bold transition-all hover:scale-105 active:scale-95 flex-shrink-0 ml-4"
+                                    >
+                                        <FiEye size={13} /> View Details
+                                    </button>
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 pt-4 border-t border-gray-800">
