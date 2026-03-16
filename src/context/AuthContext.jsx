@@ -18,8 +18,10 @@ export const AuthProvider = ({ children }) => {
             try {
                 // Verify token by fetching profile
                 const res = await api.get('/profile');
-                setUser(res.data);
-                localStorage.setItem('user', JSON.stringify(res.data));
+                // /profile returns { success, user: {...}, profile, presence }
+                const userData = res.data.user || res.data;
+                setUser(userData);
+                localStorage.setItem('user', JSON.stringify(userData));
             } catch (err) {
                 console.error('Session verification failed:', err);
                 localStorage.removeItem('token');

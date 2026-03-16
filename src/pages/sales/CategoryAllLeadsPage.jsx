@@ -22,14 +22,17 @@ const CategoryAllLeadsPage = () => {
     const fetchData = async () => {
         setLoading(true);
         try {
+            // Use /subcategories/:id/leads — the correct endpoint
             const [categoryRes, leadsRes] = await Promise.all([
-                api.get(`/categories/${id}`),
-                api.get(`/categories/${id}/leads?page=${page}&limit=20`)
+                api.get(`/categories/${id}`).catch(() => ({ data: { data: null } })),
+                api.get(`/subcategories/${id}/leads`)
             ]);
 
             setCategory(categoryRes.data.data);
-            setLeads(leadsRes.data.data);
-            setTotalPages(leadsRes.data.pagination.totalPages);
+            // API returns { success, data: [...] } — flat array, no pagination
+            const leads = leadsRes.data.data || leadsRes.data || [];
+            setLeads(Array.isArray(leads) ? leads : []);
+            setTotalPages(leadsRes.data.pagination?.totalPages || 1);
         } catch (err) {
             toast.error('Failed to load leads');
         } finally {
