@@ -23,8 +23,10 @@ api.interceptors.response.use(
             localStorage.removeItem('token');
             localStorage.removeItem('user');
 
-            // Redirect to login page only if not already there
-            if (!window.location.pathname.startsWith('/login')) {
+            // Don't redirect on public pages (share links, join form, etc.)
+            const publicPaths = ['/login', '/share', '/share-folder', '/join'];
+            const isPublicPage = publicPaths.some(p => window.location.pathname.startsWith(p));
+            if (!isPublicPage) {
                 window.location.href = '/login';
             }
         }

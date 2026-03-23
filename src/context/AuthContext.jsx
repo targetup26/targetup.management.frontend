@@ -9,6 +9,14 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const verifyToken = async () => {
+            // Skip auth verification on public pages
+            const publicPaths = ['/share', '/share-folder', '/join'];
+            const isPublicPage = publicPaths.some(p => window.location.pathname.startsWith(p));
+            if (isPublicPage) {
+                setLoading(false);
+                return;
+            }
+
             const token = localStorage.getItem('token');
             if (!token) {
                 setLoading(false);
