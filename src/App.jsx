@@ -4,6 +4,7 @@ import { useRegisterSW } from 'virtual:pwa-register/react';
 import { AuthProvider } from './context/AuthContext';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
+import RoleRoute from './components/RoleRoute';
 import Home from './pages/Home';
 import AttendancePage from './pages/AttendancePage';
 import EmployeesPage from './pages/EmployeesPage';
@@ -91,45 +92,53 @@ function App() {
             {/* Mobile Interface */}
             <Route path="/app" element={<MobileApp />} />
 
-            {/* Admin Panel - Temporarily disabled until pages are restored */}
-            <Route path="/admin/print/:id" element={<PrintPage />} />
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<DashboardPage />} />
-              <Route path="dashboard" element={<DashboardPage />} />
-              <Route path="settings" element={<GlobalSettingsPage />} />
-              <Route path="sales" element={<AdminSalesSettings />} />
-              <Route path="audit-logs" element={<AuditLogsPage />} />
-              <Route path="users" element={<UserManagementPage />} />
-              <Route path="users/:id" element={<EmployeeDetailsPage />} />
-              <Route path="roles" element={<RoleManagementPage />} />
-              <Route path="files" element={<FileManagerPage />} />
-              <Route path="chat" element={<ChatControlPage />} />
-              <Route path="forms" element={<FormSubmissionsPage />} />
-              <Route path="forms/:id" element={<FormReviewPage />} />
-              <Route path="forms/templates" element={<FormTemplatesPage />} />
-              <Route path="forms/templates/new" element={<FormTemplateEditorPage />} />
-              <Route path="forms/templates/:id" element={<FormTemplateEditorPage />} />
-              <Route path="forms/audit" element={<FormAuditPage />} />
-              <Route path="breaks" element={<BreaksPage />} />
-              <Route path="storage-settings" element={<StorageSettingsPage />} />
-              <Route path="network-monitor" element={<NetworkMonitorPage />} />
-              <Route path="settings/print" element={<PrintSettingsPage />} />
-              <Route path="organization" element={<OrganizationPage />} />
-              <Route path="taxonomy" element={<TaxonomyManagementPage />} />
+            {/* Admin Panel - SUPER_ADMIN and ADMIN only */}
+            <Route element={<RoleRoute allowedRoles={['SUPER_ADMIN', 'ADMIN']} fallback="/" />}>
+              <Route path="/admin/print/:id" element={<PrintPage />} />
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<DashboardPage />} />
+                <Route path="dashboard" element={<DashboardPage />} />
+                <Route path="settings" element={<GlobalSettingsPage />} />
+                <Route path="sales" element={<AdminSalesSettings />} />
+                <Route path="audit-logs" element={<AuditLogsPage />} />
+                <Route path="users" element={<UserManagementPage />} />
+                <Route path="users/:id" element={<EmployeeDetailsPage />} />
+                <Route path="roles" element={<RoleManagementPage />} />
+                <Route path="files" element={<FileManagerPage />} />
+                <Route path="chat" element={<ChatControlPage />} />
+                <Route path="forms" element={<FormSubmissionsPage />} />
+                <Route path="forms/:id" element={<FormReviewPage />} />
+                <Route path="forms/templates" element={<FormTemplatesPage />} />
+                <Route path="forms/templates/new" element={<FormTemplateEditorPage />} />
+                <Route path="forms/templates/:id" element={<FormTemplateEditorPage />} />
+                <Route path="forms/audit" element={<FormAuditPage />} />
+                <Route path="breaks" element={<BreaksPage />} />
+                <Route path="storage-settings" element={<StorageSettingsPage />} />
+                <Route path="network-monitor" element={<NetworkMonitorPage />} />
+                <Route path="settings/print" element={<PrintSettingsPage />} />
+                <Route path="organization" element={<OrganizationPage />} />
+                <Route path="taxonomy" element={<TaxonomyManagementPage />} />
+              </Route>
             </Route>
 
-            {/* HR/Dashboard Routes */}
+            {/* HR/Dashboard Routes - SUPER_ADMIN, ADMIN, MANAGER only */}
+            <Route element={<RoleRoute allowedRoles={['SUPER_ADMIN', 'ADMIN', 'MANAGER']} fallback="/sales" />}>
+              <Route path="/" element={<Layout />}>
+                <Route index element={<Home />} />
+                <Route path="attendance" element={<AttendancePage />} />
+                <Route path="employees" element={<EmployeesPage />} />
+                <Route path="departments" element={<DepartmentsPage />} />
+                <Route path="reports" element={<ReportsPage />} />
+                <Route path="settings" element={<SettingsPage />} />
+                <Route path="network-monitor" element={<NetworkMonitorPage />} />
+              </Route>
+            </Route>
+
+            {/* Employee-level routes - Any logged-in user */}
             <Route path="/" element={<Layout />}>
-              <Route index element={<Home />} />
-              <Route path="attendance" element={<AttendancePage />} />
-              <Route path="employees" element={<EmployeesPage />} />
-              <Route path="departments" element={<DepartmentsPage />} />
-              <Route path="reports" element={<ReportsPage />} />
               <Route path="my-files" element={<MyFilesPage />} />
               <Route path="forms" element={<FormsPage />} />
               <Route path="forms/:templateId" element={<EmployeeFormPage />} />
-              <Route path="settings" element={<SettingsPage />} />
-              <Route path="network-monitor" element={<NetworkMonitorPage />} />
             </Route>
 
             {/* Sales Portal Gateway */}

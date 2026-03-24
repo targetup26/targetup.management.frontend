@@ -183,17 +183,19 @@ export default function UserManagementPage() {
         e.preventDefault();
         setLoading(true);
         try {
-            // Prepare payload
-            const payload = { ...form };
-            // backend expects 'role' for the user role update, so map system_role to role
-            if (payload.system_role) {
-                payload.role = payload.system_role;
-            }
+            // Prepare employee payload (exclude system_role — that goes to users table)
+            const { system_role, ...employeePayload } = form;
 
             if (editingEmployee) {
-                await api.put(`/employees/${editingEmployee.id}`, payload);
+                await api.put(`/employees/${editingEmployee.id}`, employeePayload);
+
+                // If role changed AND user account exists, update the user's role separately
+                if (system_role && editingEmployee.User && system_role !== editingEmployee.User.role) {
+                    await api.put(`/users/${editingEmployee.User.id}`, { role: system_role });
+                    console.log(`[RoleUpdate] Updated user ${editingEmployee.User.id} role to ${system_role}`);
+                }
             } else {
-                await api.post('/employees', payload);
+                await api.post('/employees', employeePayload);
             }
             handleCloseModal();
             fetchEmployees(meta.page);
@@ -587,10 +589,9 @@ export default function UserManagementPage() {
                                                 value={form.system_role}
                                                 onChange={(e) => setForm({ ...form, system_role: e.target.value })}
                                             >
-                                                <option value="EMPLOYEE">Standard Employee (Attendance Only)</option>
-                                                <option value="HR_VIEWER">HR Viewer (Read Only)</option>
-                                                <option value="HR_MANAGER">HR Manager (Full Access)</option>
-                                                <option value="ADMIN">System Administrator (Root)</option>
+                                                <option value="EMPLOYEE">Standard Employee</option>
+                                                <option value="MANAGER">Manager (Department Access)</option>
+                                                <option value="SUPER_ADMIN">System Administrator (Full Access)</option>
                                             </select>
                                         </div>
                                         <p className="text-[9px] text-text-secondary italic">
