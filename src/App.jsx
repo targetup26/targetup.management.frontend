@@ -141,19 +141,21 @@ function App() {
               <Route path="forms/:templateId" element={<EmployeeFormPage />} />
             </Route>
 
-            {/* Sales Portal Gateway */}
-            <Route path="/sales" element={<SalesLayout />}>
-              <Route index element={<LeadCategoryDashboard />} />
-              <Route path="categories" element={<LeadCategoryDashboard />} />
-              <Route path="category/:id" element={<LeadSubcategoryPage />} />
-              <Route path="category/:id/all" element={<CategoryAllLeadsPage />} />
-              <Route path="subcategory/:id" element={<CategoryAllLeadsPage />} />
-              <Route path="lead/:leadId" element={<LeadDetailPage />} />
-              <Route path="request" element={<LeadsRequestPage />} />
-              <Route path="dashboard" element={<LeadsDashboardPage />} />
-              <Route path="leads" element={<LeadsDashboardPage />} />
-              <Route path="history" element={<RequestHistoryPage />} />
-              <Route path="profile" element={<SalesProfilePage />} />
+            {/* Sales Portal Gateway - requires sales.access permission */}
+            <Route element={<RoleRoute requiredPermissions={['sales.access']} fallback="/" />}>
+              <Route path="/sales" element={<SalesLayout />}>
+                <Route index element={<LeadCategoryDashboard />} />
+                <Route path="categories" element={<LeadCategoryDashboard />} />
+                <Route path="category/:id" element={<LeadSubcategoryPage />} />
+                <Route path="category/:id/all" element={<CategoryAllLeadsPage />} />
+                <Route path="subcategory/:id" element={<CategoryAllLeadsPage />} />
+                <Route path="lead/:leadId" element={<LeadDetailPage />} />
+                <Route path="request" element={<LeadsRequestPage />} />
+                <Route path="dashboard" element={<LeadsDashboardPage />} />
+                <Route path="leads" element={<LeadsDashboardPage />} />
+                <Route path="history" element={<RequestHistoryPage />} />
+                <Route path="profile" element={<SalesProfilePage />} />
+              </Route>
             </Route>
             {/* Fallback 404 Route */}
             <Route path="*" element={
