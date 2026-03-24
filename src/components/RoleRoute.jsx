@@ -38,10 +38,14 @@ export default function RoleRoute({ allowedRoles = [], requiredPermissions = [],
                 <p className="text-text-secondary">Access Denied</p>
                 <p className="text-xs text-text-muted">Your role ({userRole}) does not have permission to view this page.</p>
                 <button
-                    onClick={() => window.location.href = fallback}
-                    className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/80 transition"
+                    onClick={() => {
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('user');
+                        window.location.href = '/login';
+                    }}
+                    className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
                 >
-                    Go Back
+                    Logout
                 </button>
             </div>
         );
