@@ -49,6 +49,7 @@ import PrintPage from './pages/admin/PrintPage';
 import PrintSettingsPage from './pages/admin/PrintSettingsPage';
 import OrganizationPage from './pages/admin/OrganizationPage';
 import TaxonomyManagementPage from './pages/admin/TaxonomyManagementPage';
+import AdminLeadsPage from './pages/admin/AdminLeadsPage';
 import MyFilesPage from './pages/MyFilesPage';
 import ShareDownloadPage from './pages/ShareDownloadPage';
 import ShareFolderPage from './pages/ShareFolderPage';
@@ -118,6 +119,7 @@ function App() {
                 <Route path="settings/print" element={<PrintSettingsPage />} />
                 <Route path="organization" element={<OrganizationPage />} />
                 <Route path="taxonomy" element={<TaxonomyManagementPage />} />
+                <Route path="leads" element={<AdminLeadsPage />} />
               </Route>
             </Route>
 
@@ -129,6 +131,7 @@ function App() {
                 <Route path="employees" element={<EmployeesPage />} />
                 <Route path="departments" element={<DepartmentsPage />} />
                 <Route path="reports" element={<ReportsPage />} />
+                <Route path="breaks" element={<BreaksPage />} />
                 <Route path="settings" element={<SettingsPage />} />
                 <Route path="network-monitor" element={<NetworkMonitorPage />} />
               </Route>

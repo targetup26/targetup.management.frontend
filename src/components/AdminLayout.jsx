@@ -41,6 +41,7 @@ export default function AdminLayout() {
             title: 'Revenue & Intelligence',
             items: [
                 { path: '/admin/sales', label: 'Sales Control', icon: HiOutlineLightningBolt },
+                { path: '/admin/leads', label: 'Leads Manager', icon: HiOutlineLightningBolt },
                 { path: '/admin/taxonomy', label: 'Lead Taxonomy', icon: HiCollection },
             ]
         },

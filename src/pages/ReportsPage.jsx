@@ -103,6 +103,7 @@ export default function ReportsPage() {
         targetEmployees.forEach(emp => {
             byEmployee[emp.id] = {
                 name: emp.full_name,
+                code: emp.code,
                 present: 0,
                 late: 0,
                 absent: 0,
@@ -401,7 +402,7 @@ export default function ReportsPage() {
                                         <tr key={idx} className="group hover:bg-white/[0.03] transition-all duration-300">
                                             <td className="p-5">
                                                 <div className="font-bold text-white group-hover:text-primary transition-colors">{emp.name}</div>
-                                                <div className="text-[10px] text-text-secondary uppercase tracking-widest font-mono">ID-{Math.random().toString(36).substr(2, 6).toUpperCase()}</div>
+                                                <div className="text-[10px] text-text-secondary uppercase tracking-widest font-mono">{emp.code || '—'}</div>
                                             </td>
                                             <td className="p-5 text-center">
                                                 <span className="px-3 py-1 bg-success/10 text-success rounded-lg font-mono text-xs border border-success/20">{emp.present}</span>

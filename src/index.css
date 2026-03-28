@@ -109,3 +109,10 @@
 ::-webkit-scrollbar-thumb {
   @apply bg-surface/80 rounded-full hover:bg-primary/50 transition-colors;
 }
+
+/* Print: hide link URLs that browsers append automatically */
+@media print {
+  a[href]::after {
+    content: none !important;
+  }
+}

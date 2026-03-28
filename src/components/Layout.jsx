@@ -1,6 +1,6 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { HiHome, HiUsers, HiClock, HiChartBar, HiCog, HiBriefcase, HiTranslate, HiLogout, HiUser, HiStatusOnline } from 'react-icons/hi';
+import { HiHome, HiUsers, HiClock, HiChartBar, HiBriefcase, HiTranslate, HiLogout, HiUser, HiStatusOnline, HiPause } from 'react-icons/hi';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
@@ -65,12 +65,9 @@ export default function Layout() {
                     <SidebarItem to="/employees" icon={HiUsers} label={t('employees')} />
                     <SidebarItem to="/departments" icon={HiBriefcase} label={t('departments')} />
                     <SidebarItem to="/reports" icon={HiChartBar} label={t('reports')} />
+                    <SidebarItem to="/breaks" icon={HiPause} label="Break History" />
                     <SidebarItem to="/network-monitor" icon={HiStatusOnline} label={t('networkMonitor') || 'Network Monitor'} />
                 </nav>
-
-                <div className="mt-auto pt-4 border-t border-white/10">
-                    <SidebarItem to="/settings" icon={HiCog} label={t('settings')} />
-                </div>
             </motion.aside>
 
             {/* Main Content */}
@@ -105,7 +102,7 @@ export default function Layout() {
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: 10 }}
-                                    className="absolute right-0 mt-2 w-48 glass-panel py-2 border border-white/10 shadow-xl origin-top-right z-50"
+                                    className="absolute right-0 mt-2 w-52 bg-[#0f172a] border border-white/10 rounded-xl py-2 shadow-2xl backdrop-blur-xl z-50 overflow-hidden"
                                 >
                                     <button
                                         onClick={() => {

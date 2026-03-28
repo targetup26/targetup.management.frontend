@@ -75,20 +75,25 @@ export default function ChatControlPage() {
 
     const fetchData = async () => {
         try {
-            const [statsRes, policiesRes, roomsRes, configRes] = await Promise.all([
+            const [statsRes, policiesRes, roomsRes] = await Promise.all([
                 apiService.get('/chat/analytics'),
                 apiService.get('/chat/policies'),
                 apiService.get('/admin/chat/rooms'),
-                apiService.get('/config')
             ]);
             setStats(statsRes.data.analytics);
             setPolicies(policiesRes.data.policies);
             setRooms(roomsRes.data.rooms.filter(r => r.room_type !== 'dm'));
-            setPresenceConfig(configRes.data.config.presence);
         } catch (error) {
             console.error('Fetch error:', error);
         } finally {
             setLoading(false);
+        }
+        // /config is optional — don't block the main load if it's missing
+        try {
+            const configRes = await apiService.get('/config');
+            setPresenceConfig(configRes.data?.config?.presence || null);
+        } catch {
+            // /config endpoint not available — presence section will be hidden
         }
     };
 
@@ -98,8 +103,10 @@ export default function ChatControlPage() {
                 apiService.get('/departments'),
                 apiService.get('/users')
             ]);
-            setDepartments(deptRes.data);
-            setUsers(userRes.data);
+            setDepartments(Array.isArray(deptRes.data) ? deptRes.data : []);
+            // /users may return paginated {data: [...]} or flat array
+            const userList = Array.isArray(userRes.data) ? userRes.data : (userRes.data?.data || []);
+            setUsers(userList);
         } catch (error) {
             console.error('Metadata fetch error:', error);
         }
@@ -149,7 +156,10 @@ export default function ChatControlPage() {
         setSavingPresence(true);
         setPresenceMessage('');
         try {
-            await apiService.put('/admin/config/presence', presenceConfig);
+            await apiService.put('/admin/config/presence', {
+                labels: presenceConfig.labels,
+                thresholds: presenceConfig.thresholds
+            });
             setPresenceMessage('Presence configuration synchronized.');
             setTimeout(() => setPresenceMessage(''), 3000);
         } catch (error) {
