@@ -7,8 +7,8 @@ services:
       dockerfile: Dockerfile
     container_name: targetup_frontend
     restart: unless-stopped
-    # Removed 'ports: 80:80' because Coolify's proxy controls host port 80.
-    # Coolify will auto-route domain traffic to the container's internal port 80.
+    ports:
+      - "5174:8080"
     environment:
       # This environment variable will be supplied by Coolify UI
       - VITE_API_BASE_URL=${VITE_API_BASE_URL}
