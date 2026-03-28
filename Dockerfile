@@ -5,7 +5,7 @@ WORKDIR /usr/src/app
 
 # Copy dependency mappings
 COPY package*.json ./
-RUN npm ci
+RUN npm install --legacy-peer-deps
 
 # Copy the rest of the application
 COPY . .

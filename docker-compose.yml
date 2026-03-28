@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: targetup_frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    environment:
+      # This environment variable will be supplied by Coolify UI
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL}
