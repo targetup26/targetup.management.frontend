@@ -3,6 +3,10 @@ FROM node:18-alpine as builder
 
 WORKDIR /usr/src/app
 
+# Set build arguments for Vite
+ARG VITE_API_BASE_URL
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+
 # Copy dependency mappings
 COPY package*.json ./
 RUN npm install --legacy-peer-deps
