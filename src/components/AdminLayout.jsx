@@ -35,6 +35,7 @@ export default function AdminLayout() {
                 { path: '/admin/chat', label: 'Secure Comms', icon: HiChatAlt2 },
                 { path: '/admin/files', label: 'Cloud Assets', icon: HiFolder },
                 { path: '/admin/breaks', label: 'Shift Audits', icon: HiClock },
+                { path: '/admin/activity-monitor', label: 'Activity Monitor', icon: HiOutlineStatusOnline },
             ]
         },
         {

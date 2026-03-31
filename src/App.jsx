@@ -50,6 +50,7 @@ import PrintSettingsPage from './pages/admin/PrintSettingsPage';
 import OrganizationPage from './pages/admin/OrganizationPage';
 import TaxonomyManagementPage from './pages/admin/TaxonomyManagementPage';
 import AdminLeadsPage from './pages/admin/AdminLeadsPage';
+import ActivityMonitorPage from './pages/admin/ActivityMonitorPage';
 import MyFilesPage from './pages/MyFilesPage';
 import ShareDownloadPage from './pages/ShareDownloadPage';
 import ShareFolderPage from './pages/ShareFolderPage';
@@ -120,6 +121,7 @@ function App() {
                 <Route path="organization" element={<OrganizationPage />} />
                 <Route path="taxonomy" element={<TaxonomyManagementPage />} />
                 <Route path="leads" element={<AdminLeadsPage />} />
+                <Route path="activity-monitor" element={<ActivityMonitorPage />} />
               </Route>
             </Route>
 
