@@ -190,7 +190,7 @@ export default function ActivityMonitorPage() {
                                     >
                                         <td style={{ padding: '12px 16px' }}>
                                             <div style={{ fontWeight: 700, color: '#e2e8f0', fontSize: '0.875rem' }}>{emp.full_name || 'Unknown'}</div>
-                                            <div style={{ fontSize: '0.7rem', color: '#475569' }}>{emp.job_title || emp.code || ''}</div>
+                                            <div style={{ fontSize: '0.7rem', color: '#475569' }}>{emp.email || emp.code || ''}</div>
                                         </td>
                                         <td style={{ padding: '12px 16px' }}>
                                             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 10px', borderRadius: '20px', background: cfg.bg, color: cfg.color, fontSize: '0.75rem', fontWeight: 700 }}>
